@@ -8,8 +8,8 @@ import multiprocessing
 from functools import partial
 from tqdm import tqdm
 import time
-from data.postprocessing import extract_efficient_metadata
-from data.dataset_loader import load_dataset
+from backend.data.postprocessing import extract_efficient_metadata
+from backend.data.dataset_loader import load_dataset
 
 dataset = load_dataset()
 

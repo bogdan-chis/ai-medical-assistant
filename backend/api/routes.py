@@ -7,4 +7,4 @@ router = APIRouter()
 @router.post("/rag")
 def get_rag_response(request: RAGRequest):
     result = run_rag_pipeline(request.query, request.chunks)
-    return result
+    return result["answer"]
