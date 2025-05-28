@@ -24,8 +24,9 @@ def run_rag_pipeline(user_query: str, retrieved_chunks: list[str] = None):
     llm = ChatOpenAI(
         base_url="http://localhost:1234/v1",
         api_key="lm-studio",
-        model="llama-3.2-1b-instruct",
-        temperature=0.7
+        model="exaone-3.5-2.4b-instruct",
+        temperature=0.5,
+        max_tokens = 200
     )
 
     qa_chain = RetrievalQA.from_chain_type(
