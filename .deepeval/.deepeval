@@ -1,0 +1,1 @@
+{"LOCAL_MODEL_NAME": "phi-4:2", "LOCAL_MODEL_BASE_URL": "http://localhost:1234/v1/", "LOCAL_MODEL_API_KEY": "lm-studio", "LOCAL_MODEL_FORMAT": "json", "USE_LOCAL_MODEL": "YES", "USE_AZURE_OPENAI": "NO"}

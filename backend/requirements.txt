@@ -6,3 +6,6 @@ langchain
 chromadb
 datasets
 tqdm
+deepeval
+rouge-score
+evaluate
