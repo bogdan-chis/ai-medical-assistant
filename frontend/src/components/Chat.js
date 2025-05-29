@@ -37,6 +37,7 @@ const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [suggestedQuestions, setSuggestedQuestions] = useState([]);
   const [fullResponse, setFullResponse] = useState(null);
+  const [showLog, setShowLog] = useState(false);
   const doctorImage = loading ? './ChatGPT Image May 27, 2025, 07_22_19 PM.png' : './vs8pe84nu1qtbkaexnsltrg5gle0.png';
   const responseImage = loading ? '' : '';
 
@@ -73,7 +74,7 @@ const Chat = () => {
 
   return (
     <div className="background-image">
-    <strong className="title-style">🩺 Medical Chatbot</strong>
+    <strong className="title-style">🩺 MyMEDBuddy 🩺</strong>
     <div className="chat-container">
       
       <div className="input-area">

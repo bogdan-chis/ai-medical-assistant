@@ -25,6 +25,5 @@ def extract_efficient_metadata(question, answer):
         "source": "HealthCareMagic"
     }
 
-    # Remove keys with None values
     return {k: v for k, v in metadata.items() if v is not None}
 
