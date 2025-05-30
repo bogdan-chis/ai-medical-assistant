@@ -1,34 +1,50 @@
-# backend/llm_integration/judge_service.py
-
-from typing import Dict, Tuple
-import importlib
+import logging
+from typing import Dict, Tuple, Any
 
 from deepeval.test_case import LLMTestCase
-from deepeval.metrics.faithfulness.faithfulness import FaithfulnessMetric
+from deepeval.metrics import FaithfulnessMetric, ToxicityMetric
+
 from backend.config import Settings
 
+# configure logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class JudgeService:
     def __init__(self):
-        # Load your hallucinaton threshold from .env via Pydantic
+        # Load thresholds and settings
         cfg = Settings()
 
-        # Instantiate a single FaithfulnessMetric.
-        # By *not* passing in any model or API keys here, it will use
-        # whatever the CLI has already configured via `deepeval set-local-model`.
-        self.metric = FaithfulnessMetric(threshold=cfg.HALLUCI_THRESHOLD)
+        # Instantiate only faithfulness and toxicity metrics
+        self.metrics: Dict[str, Any] = {
+            "faithfulness": FaithfulnessMetric(threshold=cfg.HALLUCI_THRESHOLD),
+            "toxicity":    ToxicityMetric(threshold=cfg.TOXICITY_THRESHOLD),
+        }
 
-    def evaluate(self, query: str, context: str, generation: str) -> Tuple[float, Dict[str, float]]:
-        # Wrap into a DeepEval test case
-        tc = LLMTestCase(
-            input=query,
-            actual_output=generation,
-            retrieval_context=[context],
-        )
+    def evaluate(
+        self,
+        query: str,
+        context: str,
+        generation: str
+    ) -> Tuple[float, Dict[str, float]]:
+        """
+        Evaluate generation on faithfulness and toxicity.
+        Returns:
+          - primary_score: faithfulness
+          - all_scores: dict of metric_name -> score
+        """
+        all_scores: Dict[str, float] = {}
 
-        # Run the metric (talks to your local LLM as per the CLI config)
-        self.metric.measure(tc)
-        score = self.metric.score
+        # Evaluate each metric
+        for name, metric in self.metrics.items():
+            tc = LLMTestCase(
+                input=query,
+                actual_output=generation,
+                retrieval_context=[context],
+            )
+            metric.measure(tc)
+            all_scores[name] = metric.score
 
-        # Return both the single primary score and the dict
-        return score, {"faithfulness": score}
+        # Return faithfulness as primary metric
+        primary = all_scores.get("faithfulness", 0.0)
+        return primary, all_scores

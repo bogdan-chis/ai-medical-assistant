@@ -14,8 +14,9 @@ class Settings(BaseSettings):
     JUDGE_MODEL_PATH: str
 
     # DeepEval evaluation settings
-    JUDGE_METRICS: list[str] = ["faithfulness"]
+    JUDGE_METRICS: list[str] = ["faithfulness", "toxicity"]
     HALLUCI_THRESHOLD: float = 0.75
+    TOXICITY_THRESHOLD: float = 0.5
 
     # Instruct Pydantic to load from .env
     model_config = SettingsConfigDict(

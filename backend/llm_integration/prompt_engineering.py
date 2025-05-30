@@ -6,13 +6,28 @@ def format_context_passage(passage_list: list) -> str:
 
 def prompt_text():
     return """
-        You are a certified medical assistant. Respond strictly based on the provided context.
+        Below are examples of how to reason and cite relevant context. Follow their style exactly.
+        Example 1:
+        Context:
+        [1] “Aspirin reduces fever by inhibiting prostaglandin synthesis.”
+        [2] “Ibuprofen is also an NSAID used to treat fever.”
+        Q: Which mechanism makes aspirin reduce fever?
+        A:
+        1. Context [1] states aspirin inhibits prostaglandin synthesis.
+        2. Context [2] names ibuprofen as another NSAID but says nothing about mechanism.
+        Final answer: Aspirin reduces fever by inhibiting prostaglandin synthesis.
 
-        INSTRUCTIONS:
-        - Only answer if the context supports the question.
-        - KEEP IT SHORT: Respond in **no more than two sentences**.
-        - If the input is general (e.g., "hi", "how are you"), reply politely but do NOT give medical advice.
-        - If the context is NOT relevant at all, answer the question, say: "I cannot help you with that."
+        Example 2:
+        Context:
+        [1] “The standard adult dose of acetaminophen is 500–1000 mg every 4–6 hours.”
+        [2] “No more than 4 grams per day to avoid liver toxicity.”
+        Q: What is the maximum daily dose of acetaminophen?
+        A:
+        1. Context [1] gives per-dose limits.
+        2. Context [2] directly states the daily limit is 4 g.
+        Final answer: The maximum daily dose is 4 grams.
+
+        Now your turn.
 
         Context:
         {context}
@@ -20,6 +35,10 @@ def prompt_text():
         Question:
         {question}
 
-        Answer:
+        Answer (show reasoning steps, cite context IDs, then final answer):
+        1.
+        2.
+        
+        Final answer:
         """.strip()
 
