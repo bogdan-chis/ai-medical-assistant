@@ -46,7 +46,7 @@ const Chat = () => {
 
   return (
     <div className="background-image">
-      <strong className="title-style">🩺 MyMEDBuddy 🩺</strong>
+      <strong className="title-style">🩺 Dr. Dialogue 🩺</strong>
       <div className="chat-container">
         <div className="input-area">
           <textarea
@@ -84,15 +84,7 @@ const Chat = () => {
       <img
         src={doctorImage}
         alt="Doctor"
-        style={{
-          position: 'absolute',
-          left: '200px',
-          top: '350px',
-          height: '300px',
-          objectFit: 'contain',
-          display: 'block',
-          margin: '0 auto 1rem auto'
-        }}
+        className='doctor-avatar'
       />
 
       {loading === false && fullResponse && (
