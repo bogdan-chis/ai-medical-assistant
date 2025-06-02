@@ -4,26 +4,6 @@
 
 ---
 
-## 📋 Table of Contents
-
-1. [Project Overview](#project-overview)  
-2. [Features](#features)  
-3. [Architecture](#architecture)  
-4. [Repository Structure](#repository-structure)  
-5. [Installation & Setup](#installation--setup)  
-6. [Configuration](#configuration)  
-7. [Data Ingestion & Embedding](#data-ingestion--embedding)  
-8. [Running the API Server](#running-the-api-server)  
-9. [Frontend (React) Setup](#frontend-react-setup)  
-10. [Example Usage](#example-usage)  
-11. [Evaluation Pipeline (DeepEval)](#evaluation-pipeline-deepeval)  
-12. [Environment Variables](#environment-variables)  
-13. [Contributing](#contributing)  
-14. [License](#license)  
-15. [Short Project Description](#short-project-description)  
-
----
-
 ## 🧐 Project Overview
 
 **Dr. Dialogue** began as a generic research‐assistant framework but has been specialized into a **medical assistant**. It leverages a locally hosted LLM (via LM Studio) and a doctor–patient conversation dataset to answer user (patient) queries with contextually relevant, up‐to‐date medical information. All answers are then run through a secondary “DeepEval” LLM to ensure consistency, accuracy, and safety before returning to the user. 🔒✅
