@@ -1,30 +1,121 @@
-# 🤖 AI Research Assistant
+# Dr. Dialogue 🤖🏥
 
-A web-based platform for exploring academic and scientific literature using LLMs + RAG. Ask questions and get answers that are grounded in real papers, filtered for toxicity and hallucination risk.
-
-Inspired by [Consensus.app](https://consensus.app).
+> **A medical‐domain conversational assistant** powered by retrieval‐augmented generation (RAG) over a curated doctor–patient dialogue dataset, with answer evaluation via a secondary LLM. 💬📚
 
 ---
 
-## 📌 Features
+## 📋 Table of Contents
 
-- 🔍 Vector database (ChromaDB, FAISS, etc.) for semantic search
-- 🧠 Local LLM integration via [LM Studio](https://lmstudio.ai)
-- ⚙️ RAG (Retrieval-Augmented Generation) pipeline
-- 🛡️ Toxicity and hallucination guardrails (Perspective API, RAG-based checks)
-- 🖥️ Simple frontend in React or Streamlit
+1. [Project Overview](#project-overview)  
+2. [Features](#features)  
+3. [Architecture](#architecture)  
+4. [Repository Structure](#repository-structure)  
+5. [Installation & Setup](#installation--setup)  
+6. [Configuration](#configuration)  
+7. [Data Ingestion & Embedding](#data-ingestion--embedding)  
+8. [Running the API Server](#running-the-api-server)  
+9. [Frontend (React) Setup](#frontend-react-setup)  
+10. [Example Usage](#example-usage)  
+11. [Evaluation Pipeline (DeepEval)](#evaluation-pipeline-deepeval)  
+12. [Environment Variables](#environment-variables)  
+13. [Contributing](#contributing)  
+14. [License](#license)  
+15. [Short Project Description](#short-project-description)  
 
 ---
 
-## 🧱 Architecture
+## 🧐 Project Overview
 
-1. User submits a query via web UI.
-2. Backend performs vector search on embedded documents.
-3. Relevant context + query is sent to a local LLM (via LM Studio).
-4. Output is analyzed for toxicity and hallucination risks.
-5. Final answer is returned with optional warnings and source citations.
+**Dr. Dialogue** began as a generic research‐assistant framework but has been specialized into a **medical assistant**. It leverages a locally hosted LLM (via LM Studio) and a doctor–patient conversation dataset to answer user (patient) queries with contextually relevant, up‐to‐date medical information. All answers are then run through a secondary “DeepEval” LLM to ensure consistency, accuracy, and safety before returning to the user. 🔒✅
 
 ---
 
-## 📁 Project Structure
+## ✨ Features
 
+- **🔍 Retrieval‐Augmented Generation (RAG):**  
+  - Ingests and preprocesses raw doctor–patient transcripts.  
+  - Splits and embeds each chunk with a local embeddings service.  
+  - Stores embeddings in ChromaDB for fast nearest‐neighbor lookups.  
+  - Retrieves the most relevant snippets at query time and supplies them as context to the LLM.
+
+- **🏥 Local LLM Hosting:**  
+  - **Primary LLM** (e.g., a fine‐tuned medical model) runs on a local LM Studio instance.  
+  - **Secondary LLM (DeepEval)** also hosted locally to evaluate clarity, quality, and safety of each generated response.
+
+- **⚙️ FastAPI Backend:**  
+  - Exposes REST endpoints for ingestion, querying, and evaluation.  
+  - Manages ingestion triggers, embedding calls, RAG orchestration, and evaluation pipelines.
+
+- **🖥️ React Frontend:**  
+  - Provides a simple chat interface for end‐users (patients).  
+  - Sends user queries over HTTP, receives and displays filtered, LLM‐generated medical guidance.
+
+- **🛡️ Safety & Guardrails:**  
+  - Integrates Perspective API to filter responses for harmful or disallowed content.  
+  - Maintains custom prompt‐engineering templates and guardrails for medical disclaimers.
+
+---
+
+## 🏗️ Architecture
+
+```text
++-------------------------------------------------------------+
+|                         Frontend Layer                      |
+|  ┌───────────────────────────────────────────────────────┐  |
+|  | React UI  <─── HTTP: Query/Response ──  HTTP Wrappers |  |
+|  └───────────────────────────────────────────────────────┘  |
+|                              │                              |
+|                              ▼                              |
+|                     ┌───────────────────┐                   |
+|                     │  API Server       │                   |
+|                     │  (FastAPI)         │◀─┐              |
+|                     └───────────────────┘  │                |
++-------------------------------------------------------------+
+          │            ▲                      │
+          │            │                      │
+          │         Trigger                   │
+          │         Ingestion                 │
+          ▼            │                      │
+┌───────────────────────────────────┐         │
+│       Ingestion & Preprocessing   │         │
+│  ┌─────────────┐    ┌───────────┐  │         │
+│  │Dataset      │──▶ │Document   │──┼─────────┘
+│  │Loader       │    │Splitter   │◀─┘
+│  └─────────────┘    └───────────┘
+│         │                  │
+│         ▼                  ▼
+│   Postprocessing        ┌──────────────┐
+│         │              │ Embeddings   │
+│         │─────────────▶│ Service      │
+│                        └──────────────┘
+│                                │
+└────────────────────────────────┤
+       Query Embeddings          │
+                                ▼
+                          ┌───────────────┐
+                          │Vector Store   │
+                          │Interface      │───┐
+                          └───────────────┘   │
+                                  │           │
+                                  ▼           │
+                           Retrieve Context    │
+                                  │           │
+                                  ▼           │
+                             ┌───────────┐     │
+                             │   RAG     │─────┘
+                             │ Service   │
+                             └───────────┘
+                                  │
+                     ┌────────────┴────────────┐
+                     │                         │
+                ┌──────────┐             ┌────────────┐
+                │ LLM      │             │ DeepEval   │
+                │ Client   │             │ Client     │
+                └──────────┘             └────────────┘
+                     │                         │
+                     │                         │
+             (Response from LLM)        (Evaluation Score)
+                     │                         │
+                     └────────────┬────────────┘
+                                  ▼
+                            Final Response
