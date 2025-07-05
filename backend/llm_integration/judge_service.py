@@ -2,7 +2,7 @@ import logging
 from typing import Dict, Tuple, Any
 
 from deepeval.test_case import LLMTestCase
-from deepeval.metrics import FaithfulnessMetric, ToxicityMetric
+from deepeval.metrics import FaithfulnessMetric, ToxicityMetric, ContextualRelevancyMetric
 
 from backend.config import Settings
 
@@ -19,6 +19,7 @@ class JudgeService:
         self.metrics: Dict[str, Any] = {
             "faithfulness": FaithfulnessMetric(threshold=cfg.HALLUCI_THRESHOLD),
             "toxicity":    ToxicityMetric(threshold=cfg.TOXICITY_THRESHOLD),
+            "contextual_relevancy": ContextualRelevancyMetric(threshold=cfg.RELEVANCY_THRESHOLD)
         }
 
     def evaluate(
